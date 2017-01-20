@@ -1,7 +1,5 @@
 ---
 - name: Save every inventory host into /etc/hosts
-  become: yes
-  become_method: sudo
   vars:
     - ih_address: "{{ hostvars[item]['ansible_default_ipv4']['address' ]}}"
     - ih_hostname: "{{ item }}"
