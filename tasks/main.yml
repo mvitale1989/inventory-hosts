@@ -1,12 +1,14 @@
 ---
+- name: Delete old managed /etc/hosts entries, in case anything's changed
+  lineinfile: dest=/etc/hosts regexp='{{ih_signature}}' state=absent
+
 - name: Save every inventory host into /etc/hosts
   vars:
     - ih_address: "{{ hostvars[item]['ansible_default_ipv4']['address' ]}}"
     - ih_hostname: "{{ item }}"
     - ih_line: "{{ ih_address }}	{{ ih_hostname }}"
-    - ih_line_hash: "{{ ih_line | md5 }}"
   lineinfile: >
     dest=/etc/hosts
-    line='{{ ih_line }}	#{{ ih_line_hash }} {{ ih_signature }}'
+    line='{{ ih_line }}	#{{ ih_signature }}'
     regexp='{{ ih_line }}(.*){{ ih_signature }}'
   with_items: groups.all
