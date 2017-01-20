@@ -8,5 +8,5 @@
   lineinfile: >
     dest=/etc/hosts
     line='{{ ih_line }}	#{{ ih_line_hash }} {{ ih_signature }}'
-    regexp=' {{ ih_line }}(.*){{ ih_signature }}$'
+    regexp='{{ ih_line }}(.*){{ ih_signature }}'
   with_items: groups.all
