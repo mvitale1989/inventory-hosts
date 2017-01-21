@@ -1,3 +1,2 @@
 ---
-ansible_become: yes
-ansible_become_method: sudo
+ih_signature: "mvitale1989.inventory-hosts"
