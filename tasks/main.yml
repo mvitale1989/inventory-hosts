@@ -4,7 +4,9 @@
 
 - name: Save every inventory host into /etc/hosts
   vars:
-    - ih_address: "{{ hostvars[item]['ansible_default_ipv4']['address' ]}}"
+    - ih_address: "{{ ih_host_ip[item] if ih_host_ip[item] is defined else \
+      hostvars[item]['ansible_' + ih_host_interface[item]].ipv4.address if ih_host_interface[item] is defined else \
+      hostvars[item]['ansible_default_ipv4']['address' ] }}"
     - ih_hostname: "{{ item }}"
     - ih_line: "{{ ih_address }}	{{ ih_hostname }}"
   lineinfile: >

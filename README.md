@@ -1,31 +1,45 @@
-Role Name
+mvitale1989.inventory-hosts
 =========
 
-A brief description of the role goes here.
+Ansible role to automatically add every inventory host to each host's /etc/hosts. It uses the hostname as it appears in the inventory file, and allow co-existence with any additional manual configuration on each hosts' /etc/hosts, by using a signature to distinguish the lines it has jurisdiction over.
+
+You can control the way it deduces each of the hosts' IP (by explicit definition, by interface or by letting ansible figure the default IP) and the signature used to mark managed /etc/hosts lines.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- lineinfile module
+- superuser permissions during role execution, e.g. "become_method: sudo"
+- On the controlling host, all of the hosts you have to reach must be
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+- ih_signature: the string that marks managed lines in /etc/hosts. Example: "ih_signature: 'this_marks_a_line_managed_by_ansible'"
+- ih_host_interface: a hash map containing, for each host, the name of the interface to use to determine its IP. Example: "ih_host_interface: {'development.myserver.com': 'eth0' }"
+- ih_host_ip: a hash map contianing the explicit IP to use for each host. Example: "ih_host_ip: { 'testing.myserver.com': '192.168.1.15' }"
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This module has no dependencies
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+        - mvitale1989.inventory-hosts
+
+    - hosts: other_servers
+      roles:
+        - role: mvitale1989.inventory-hosts
+          ih_signature: 'this_line_is_managed_by_ansible'
+          ih_host_interface:
+            development.server.com: 'eht0'
+            testing.server.com: 'ens3'
+          ih_host_ip:
+            production.server.com: '192.168.3.24'
 
 License
 -------
@@ -35,4 +49,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+https://github.com/mvitale1989
