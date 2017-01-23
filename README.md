@@ -8,9 +8,9 @@ You can control the way it deduces each of the hosts' IP (by explicit definition
 Requirements
 ------------
 
+- On the host you call "ansible-playbook" from, the /etc/hosts file must alreadymust be configured manually to contain the controlled hosts
 - lineinfile module
 - superuser permissions during role execution, e.g. "become_method: sudo"
-- On the controlling host, all of the hosts you have to reach must be
 
 Role Variables
 --------------
