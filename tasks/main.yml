@@ -1,16 +1,30 @@
 ---
-- name: Delete old managed /etc/hosts entries, in case anything's changed
-  lineinfile: dest=/etc/hosts regexp='{{ih_signature}}' state=absent
-
 - name: Save every inventory host into /etc/hosts
   vars:
-    - ih_address: "{{ ih_host_ip[item] if ih_host_ip[item] is defined else \
-      hostvars[item]['ansible_' + ih_host_interface[item]].ipv4.address if ih_host_interface[item] is defined else \
-      hostvars[item]['ansible_default_ipv4']['address' ] }}"
-    - ih_hostname: "{{ item }}"
-    - ih_line: "{{ ih_address }}	{{ ih_hostname }}"
-  lineinfile: >
-    dest=/etc/hosts
-    line='{{ ih_line }}	#{{ ih_signature }}'
-    regexp='{{ ih_line }}(.*){{ ih_signature }}'
-  with_items: groups.all
+    - block_content: >
+        {% if not ih_clear %}
+
+        {% for item in groups.all %}
+        {% if not item | ipaddr %}
+        {{
+          ih_host_ip[item] if ih_host_ip[item] is defined else
+          hostvars[item]['ansible_' + ih_host_interface[item]].ipv4.address if ih_host_interface[item] is defined else
+          hostvars[item]['ansible_default_ipv4']['address'] if hostvars[item]['ansible_default_ipv4'] is defined else
+          lookup('dig',item)
+        }}
+        {{
+          ih_host_name[item] if ih_host_name[item] is defined else
+          item
+        }}
+
+        {% endif %}
+        {%- endfor %}
+
+        {% for item in ih_extra_hosts %}
+        {{ ih_extra_hosts[item] }} {{ item }}
+
+        {%- endfor %}
+
+        {% endif %}
+  blockinfile: block="{{ block_content }}" dest="/etc/hosts" marker="##### {mark} {{ ih_signature }}" \
+                 create=true state={{ "present" if not ih_clear else "absent"  }}
