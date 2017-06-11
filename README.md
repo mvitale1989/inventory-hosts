@@ -1,5 +1,5 @@
-mvitale1989.inventory-hosts
-=========
+inventory-hosts
+===============
 
 Ansible role to automatically add every inventory host to a host's `/etc/hosts`. Managed lines will co-exist with any manual configuration.
 
@@ -69,4 +69,6 @@ BSD
 Author Information
 ------------------
 
-https://github.com/mvitale1989
+[https://github.com/mvitale1989][1]
+
+[1]:https://github.com/mvitale1989
